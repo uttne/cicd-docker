@@ -1,0 +1,77 @@
+version: '3'
+services: 
+    gitea:
+        image: gitea/gitea:latest
+        container_name: cicd_gitea
+        environment: 
+            # https://docs.gitea.io/en-us/install-with-docker/#environments-variables
+
+            # The UID (Unix user ID) of the user that runs Gitea within the container. Match this to the UID of the owner of the `/data` volume if using host volumes (this is not necessary with named volumes).
+            - USER_UID=1000
+            # The GID (Unix group ID) of the user that runs Gitea within the container. Match this to the GID of the owner of the `/data` volume if using host volumes (this is not necessary with named volumes).
+            - USER_GID=1000
+
+            # - SSH_PORT=10022
+            - DISABLE_SSH=true
+            - HTTP_PORT=20080
+            - ROOT_URL=http://ci-cd.internal:20080/
+
+            - DB_TYPE=postgres
+            - DB_HOST=gitea_db:5432
+            - DB_NAME=gitea
+            - DB_USER=gitea
+            - DB_PASSWD=gitea
+        restart: always
+        networks:
+            - cicd_net
+        volumes: 
+            - gitea_data
+        ports:
+            - "20080:20080"
+        extra_hosts: 
+            - "ci-cd.internal:${CICD_HOST_IP}"
+    
+    gitea_db:
+        image: postgres:9.6
+        container_name: cicd_gitea_postgres
+        restart: always
+        environment:
+          - POSTGRES_USER=gitea
+          - POSTGRES_PASSWORD=gitea
+          - POSTGRES_DB=gitea
+        networks:
+          - cicd_net
+        volumes:
+          - gitea_db_postgres_data:/var/lib/postgresql/data
+    
+    drone:
+        image: drone/drone:latest
+        container_name: cicd_drone
+        restart: always
+        environment: 
+            # 
+            - DRONE_GITEA_SERVER=http://ci-cd.internal:20080
+            - DRONE_GITEA_CLIENT_ID=${DRONE_GITEA_CLIENT_ID}
+            - DRONE_GITEA_CLIENT_SECRET=${DRONE_GITEA_CLIENT_SECRET}
+            - DRONE_RPC_SECRET=${DRONE_RPC_SECRET}
+            - DRONE_SERVER_HOST=ci-cd.internal:21080
+            - DRONE_SERVER_PROTO=http
+        networks:
+            - cicd_net
+        volumes: 
+            - drone_data:/data
+        ports: 
+            - "21080:80"
+        extra_hosts: 
+            - "ci-cd.internal:${CICD_HOST_IP}"
+
+volumes: 
+    gitea_data:
+        driver: local
+    gitea_db_postgres_data:
+        driver: local
+    drone_data:
+        driver: local
+networks:
+    cicd_net:
+        external: false
