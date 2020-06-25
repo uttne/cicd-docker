@@ -65,6 +65,30 @@ services:
         extra_hosts: 
             - "ci-cd.internal:${CICD_HOST_IP}"
 
+    drone_runner:
+        image: drone/drone-runner-docker:latest
+        container_name: cicd_drone_runner
+        restart: always
+        environment: 
+            - DRONE_RPC_PROTO=http
+            - DRONE_RPC_HOST=ci-cd.internal:21080
+            - DRONE_RPC_SECRET=${DRONE_RPC_SECRET}
+            - DRONE_RUNNER_CAPACITY=2
+            - DRONE_RUNNER_NAME=ci-cd.internal:23000
+        networks: 
+            - cicd_net
+        volumes: 
+            # windows
+            # - //./pipe/docker_engine://./pipe/docker_engine
+            # linux
+            - /var/run/docker.sock:/var/run/docker.sock
+        ports: 
+            - "23000:3000"
+        extra_hosts: 
+            - "ci-cd.internal:${CICD_HOST_IP}"
+        depends_on: 
+            - drone
+
 volumes: 
     gitea_data:
         driver: local
