@@ -75,6 +75,10 @@ services:
             - DRONE_RPC_SECRET=${DRONE_RPC_SECRET}
             - DRONE_RUNNER_CAPACITY=2
             - DRONE_RUNNER_NAME=ci-cd.internal:23000
+            
+            # https://docs.drone.io/runner/docker/configuration/dashboard/#activation
+            - DRONE_UI_USERNAME=root
+            - DRONE_UI_PASSWORD=root
         networks: 
             - cicd_net
         volumes: 
