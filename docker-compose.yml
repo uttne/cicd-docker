@@ -56,6 +56,7 @@ services:
             - DRONE_RPC_SECRET=${DRONE_RPC_SECRET}
             - DRONE_SERVER_HOST=ci-cd.internal:21080
             - DRONE_SERVER_PROTO=http
+            - DRONE_USER_CREATE=username:drone,admin:true
         networks:
             - cicd_net
         volumes: 
