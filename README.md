@@ -61,12 +61,37 @@ docker を動かしている Host マシンの環境変数に以下を追加す�
 
 Gitea に作成したアカウントと連携をする処理を行う
 
-1. `http://ci-cd.internal:21080` にアクセスする
-2. `http://ci-cd.internal:20080/user/login` にリダイレクトされるので作成した Drone.io との連携ユーザーでログインする
+1. [http://ci-cd.internal:21080](http://ci-cd.internal:21080) にアクセスする
+2. [http://ci-cd.internal:20080/user/login](http://ci-cd.internal:20080/user/login) にリダイレクトされるので作成した Drone.io との連携ユーザーでログインする
 ![image](readme_img/2020-06-23-23-23-57.png)
   作成した OAuth Application を作成したユーザーでログインをしているとこの画面はスキップされる
 
 3. アクセス権の許可ダイアログが出るので許可を行う
 ![image](readme_img/2020-06-24-00-57-26.png)
 
-4. 
+### Drone の有効化
+
+1. Gitea で適当なリポジトリを作成する
+2. [http://ci-cd.internal:21080](http://ci-cd.internal:21080) にアクセスすると連携したユーザーが持っているレポジトリ―が表示される
+![image](readme_img/2020-06-25-23-04-56.png)
+
+3. `ACTIVATE` をクリックし `ACTIVATE REPOSITORY` でリポジトリが更新されたときに CI パイプラインが実行されるようにする
+![image](readme_img/2020-06-25-23-08-53.png)
+
+## 実行
+
+### CI パイプラインを実行する
+
+1. Drone ドキュメントの [Quick Start](https://docs.drone.io/quickstart/docker/) を参考に `.drone.yml` を作成しリポジトリにコミットする
+2. CI パイプラインが実行される
+![image](readme_img/2020-06-25-23-11-36.png)
+
+## 注意事項
+
+### Windows での Drone Runner
+
+現状の自分の Windows では設定が悪いのか Docker のパイプラインを有効にすることができなかったため Hyper-V に Ubuntu をインストールし、そちらで Docker の Runner を実行した。
+
+* [Install On Windows | Drone](https://docs.drone.io/runner/docker/installation/windows/)
+* [dockerd | Docker Documentation](https://docs.docker.com/engine/reference/commandline/dockerd/)
+  * このオプションをうまく設定することでパイプラインを設定することが可能かも?
