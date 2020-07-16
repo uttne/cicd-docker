@@ -95,3 +95,8 @@ Gitea に作成したアカウントと連携をする処理を行う
 * [Install On Windows | Drone](https://docs.drone.io/runner/docker/installation/windows/)
 * [dockerd | Docker Documentation](https://docs.docker.com/engine/reference/commandline/dockerd/)
   * このオプションをうまく設定することでパイプラインを設定することが可能かも?
+
+### セキュリティについて
+* gitea と drone を動作させているサーバーは互いに通信可能である必要がある
+* EC2 などを使用する場合はセキュリティグループの設定を気を付けること
+
